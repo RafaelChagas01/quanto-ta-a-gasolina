@@ -7,13 +7,13 @@ from .sheet import PriceRow
 from .text import key, slugify, title_pt
 
 PRODUCT_INFO = {
-    "gasolina": {"label": "Gasolina comum", "unit": "R$/l"},
-    "gasolina_aditivada": {"label": "Gasolina aditivada", "unit": "R$/l"},
-    "etanol": {"label": "Etanol", "unit": "R$/l"},
-    "diesel_s10": {"label": "Diesel S10", "unit": "R$/l"},
-    "diesel": {"label": "Diesel S500", "unit": "R$/l"},
-    "gnv": {"label": "GNV", "unit": "R$/m³"},
-    "glp": {"label": "Gás de cozinha (13kg)", "unit": "R$/13kg"},
+    "gasolina": {"label": "Gasolina comum", "unit": "por litro"},
+    "gasolina_aditivada": {"label": "Gasolina aditivada", "unit": "por litro"},
+    "etanol": {"label": "Etanol", "unit": "por litro"},
+    "diesel_s10": {"label": "Diesel S10", "unit": "por litro"},
+    "diesel": {"label": "Diesel S500", "unit": "por litro"},
+    "gnv": {"label": "GNV", "unit": "por m³"},
+    "glp": {"label": "Gás de cozinha", "unit": "botijão de 13kg"},
 }
 
 
@@ -69,19 +69,32 @@ def build_dataset(rows: list[PriceRow], states: dict, cities: dict) -> dict:
     return {"meta": meta, "states": state_files}
 
 
-def write_dataset(dataset: dict, out_dir: Path) -> None:
+def write_dataset(dataset: dict, out_dir: Path) -> bool:
+    """Grava os JSON. Retorna False se nada mudou (e nao mexe no updated_at)."""
     uf_dir = out_dir / "uf"
     uf_dir.mkdir(parents=True, exist_ok=True)
+    changed = False
 
     for old in uf_dir.glob("*.json"):
         if old.stem not in dataset["states"]:
             old.unlink()
+            changed = True
 
     for uf, content in dataset["states"].items():
-        _dump(content, uf_dir / f"{uf}.json")
-    _dump(dataset["meta"], out_dir / "meta.json")
+        changed |= _dump(content, uf_dir / f"{uf}.json")
+
+    meta = dict(dataset["meta"])
+    meta_path = out_dir / "meta.json"
+    if not changed and meta_path.exists():
+        previous = json.loads(meta_path.read_text(encoding="utf-8"))
+        meta["updated_at"] = previous.get("updated_at", meta["updated_at"])
+    changed |= _dump(meta, meta_path)
+    return changed
 
 
-def _dump(content: dict, path: Path) -> None:
-    text = json.dumps(content, ensure_ascii=False, separators=(",", ":"))
-    path.write_text(text + "\n", encoding="utf-8")
+def _dump(content: dict, path: Path) -> bool:
+    text = json.dumps(content, ensure_ascii=False, separators=(",", ":")) + "\n"
+    if path.exists() and path.read_text(encoding="utf-8") == text:
+        return False
+    path.write_text(text, encoding="utf-8", newline="\n")
+    return True

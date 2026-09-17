@@ -98,8 +98,10 @@ def main() -> int:
     states, cities = ibge_names(municipios.json())
 
     dataset = build_dataset(rows, states, cities)
-    write_dataset(dataset, args.out)
-    log.info("%d estados gravados em %s", len(dataset["states"]), args.out)
+    if write_dataset(dataset, args.out):
+        log.info("%d estados gravados em %s", len(dataset["states"]), args.out)
+    else:
+        log.info("nenhuma novidade desde a ultima coleta")
     return 0
 
 
