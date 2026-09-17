@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Quanto tá a gasolina? Preço dos combustíveis na sua cidade</title>
+  <meta name="description" content="Preço médio da gasolina, etanol, diesel, GNV e gás de cozinha em 385 cidades, com base na pesquisa semanal da ANP. Atualizado automaticamente.">
+  <meta name="theme-color" content="#16181B">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%2316181B'/%3E%3Ctext x='16' y='23' font-family='Arial' font-weight='700' font-size='18' text-anchor='middle' fill='%23FFC400'%3ER$%3C/text%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top">
+    <div class="wrap">
+      <h1>Quanto tá a gasolina?</h1>
+      <p class="lede">Preço médio nos postos da sua cidade, pela pesquisa que a ANP faz toda semana.</p>
+
+      <form class="pickers" id="pickers">
+        <label>
+          Estado
+          <select id="state" disabled></select>
+        </label>
+        <label>
+          Cidade
+          <select id="city" disabled></select>
+        </label>
+      </form>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+    <p class="status" id="status" role="status">Carregando dados...</p>
+
+    <div class="layout" id="content" hidden>
+
+      <!-- placa de precos -->
+      <section class="board" aria-labelledby="board-title">
+        <div class="board-head">
+          <h2 id="board-title">Postos em <span id="board-city"></span></h2>
+          <p id="board-week"></p>
+        </div>
+        <ul class="board-list" id="board-list"></ul>
+      </section>
+
+      <div class="side">
+        <section class="verdict" id="verdict" aria-labelledby="verdict-title">
+          <h2 id="verdict-title">Etanol ou gasolina?</h2>
+          <p class="verdict-answer" id="verdict-answer"></p>
+          <p class="verdict-detail" id="verdict-detail"></p>
+        </section>
+
+        <section class="history" aria-labelledby="history-title">
+          <div class="history-head">
+            <h2 id="history-title">Últimas semanas</h2>
+            <label class="inline-picker">
+              <span class="visually-hidden">Combustível do gráfico</span>
+              <select id="product"></select>
+            </label>
+          </div>
+          <div class="chart" id="chart"></div>
+          <p class="chart-note">Linha: preço médio. Faixa: do posto mais barato ao mais caro pesquisado.</p>
+        </section>
+      </div>
+
+      <section class="ranking" aria-labelledby="ranking-title">
+        <h2 id="ranking-title"></h2>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Cidade</th>
+              <th scope="col" class="num">Preço médio</th>
+              <th scope="col" class="num">Postos</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-body"></tbody>
+        </table>
+        <p class="ranking-note" id="ranking-note"></p>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="wrap foot">
+    <p>
+      Fonte: <a href="https://www.gov.br/anp/pt-br/assuntos/precos-e-defesa-da-concorrencia/precos/levantamento-de-precos-de-combustiveis-ultimas-semanas-pesquisadas" rel="noopener noreferrer" target="_blank">Levantamento de Preços de Combustíveis, ANP</a>.
+      Nomes das cidades: IBGE. <span id="updated"></span>
+    </p>
+    <p>
+      A ANP pesquisa uma amostra de postos, então o preço da bomba perto de você pode ser diferente.
+      Projeto de portfólio de <a href="https://github.com/RafaelChagas01/quanto-ta-a-gasolina" rel="noopener noreferrer" target="_blank">Rafael Chagas</a>.
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
